@@ -1,68 +1,56 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC # Leiden QA - OCP Attendance & Task Assignment Automation
-# MAGIC
-# MAGIC - This notebook is designed to ingest, transform, and prepare data required for automating the QA OCP daily task assignment process.
-# MAGIC
+# Leiden QA - OCP Attendance & Task Assignment Automation
+
+# This notebook is designed to ingest, transform, and prepare data required for automating the QA OCP daily task assignment process.
+
 # MAGIC #### Objective
-# MAGIC
-# MAGIC The goal is to replace manual Excel-based scheduling by building a data-driven solution in Databricks that:
-# MAGIC
-# MAGIC - Identifies employee availability on each working day
-# MAGIC - Applies role-based eligibility and constraints
-# MAGIC - Supports automated assignment of operational tasks (e.g., QOTF, QA Exp Contact, Triager, etc.)
-# MAGIC
-# MAGIC This notebook serves as the foundation for building a scalable and maintainable QA task automation pipeline.
-# MAGIC
-# MAGIC Inshort these note book - 
-# MAGIC -  Replace manual Excel-based scheduling with a scalable assignment engine that:
-# MAGIC -  Identifies employee availability by day
-# MAGIC - Applies role/subteam/eligibility rules
-# MAGIC - Prevents over-assignment using task count logic
-# MAGIC -  Supports daily / weekly / specific-day tasks
-# MAGIC -  Produces a dashboard-ready output table
+
+#The goal is to replace manual Excel-based scheduling by building a data-driven solution in Databricks that:
+
+#Identifies employee availability on each working day
+# Applies role-based eligibility and constraints
+# Supports automated assignment of operational tasks (e.g., QOTF, QA Exp Contact, Triager, etc.)
+
+#This notebook serves as the foundation for building a scalable and maintainable QA task automation pipeline.
+
+#Inshort these note book - 
+#Replace manual Excel-based scheduling with a scalable assignment engine that:
+#Identifies employee availability by day
+#Applies role/subteam/eligibility rules
+#Prevents over-assignment using task count logic
+#Supports daily / weekly / specific-day tasks
+#Produces a dashboard-ready output table
 
 # COMMAND ----------
+##### Input Data Sources
+#Attendance_Schedule
+#Contains daily employee attendance/availability in a matrix format
+# -Each row represents a date
+# - Each column represents an employee
+# - Cell values represent attendance codes (W, L, WFH, SL, etc.)
+# 2. Roles_QA_Master
+# - Contains employee details such as:
+# - Team
+# - Role
+# - FTE
+# - Active status
+# - Task eligibility flags (QOTF, QA Exp Contact, etc.)
+# 3. Codes
+# - Defines the meaning of attendance codes
+# - Used to determine employee availability (Available / Not Available)
+#Task schedule 
+#used for the validation with th output 
+
+# %pip install Office365-REST-Python-Client==2.4.1 sqlalchemy tqdm
+# %pip install xlrd
+# dbutils.library.restartPython()
 
 # MAGIC %md
-# MAGIC #### Input Data Sources
-# MAGIC
-# MAGIC 1. Attendance_Schedule
-# MAGIC   - Contains daily employee attendance/availability in a matrix format
-# MAGIC   - Each row represents a date
-# MAGIC   - Each column represents an employee
-# MAGIC   - Cell values represent attendance codes (W, L, WFH, SL, etc.)
-# MAGIC 2. Roles_QA_Master
-# MAGIC   - Contains employee details such as:
-# MAGIC     - Team
-# MAGIC     - Role
-# MAGIC     - FTE
-# MAGIC     - Active status
-# MAGIC     - Task eligibility flags (QOTF, QA Exp Contact, etc.)
-# MAGIC 3. Codes
-# MAGIC   - Defines the meaning of attendance codes
-# MAGIC   - Used to determine employee availability (Available / Not Available)
-# MAGIC 4. Task schedule 
-# MAGIC   - used for the validation with th output 
+## Load input files
 
-# COMMAND ----------
-
-# MAGIC %pip install Office365-REST-Python-Client==2.4.1 sqlalchemy tqdm
-# MAGIC %pip install xlrd
-# MAGIC dbutils.library.restartPython()
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC # Load input files
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC ## Share point connection - CDP certificate authentication --New Method
-
-# COMMAND ----------
-
+# %md
+### Share point connection - CDP certificate authentication --New Method
 
 import pyspark.sql.functions as F
 from pyspark.sql import Window
@@ -104,8 +92,6 @@ file_response = File.open_binary(
 )
 
 file_bytes = io.BytesIO(file_response.content)
-
-# COMMAND ----------
 
 #--------------------------------------------------------------
 # Read Sheets - Leave Schedule /Roles_QA/ Task Schedule / Codes
@@ -2446,7 +2432,4 @@ file = folder.upload_file(
 
 print("File uploaded successfully")
 
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC
+# %md
